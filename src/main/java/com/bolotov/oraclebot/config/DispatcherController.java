@@ -30,7 +30,7 @@ public class ControllerDistributor {
                 String actionMethod = annotation.action();
                 if(action.equals(actionMethod)){
                     try {
-                        method.invoke(controller, new TelegramEvent());
+                        method.invoke(controller, event);
                         return;
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);
