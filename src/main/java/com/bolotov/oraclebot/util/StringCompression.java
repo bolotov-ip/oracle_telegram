@@ -3,20 +3,23 @@ package com.bolotov.oraclebot.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class StringCompression {
 
-    public static byte[] compress(String str) throws IOException {
+    public static String compress(String str) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         GZIPOutputStream gzipOutputStream = new GZIPOutputStream(outputStream);
-        gzipOutputStream.write(str.getBytes());
+        gzipOutputStream.write(str.getBytes(StandardCharsets.UTF_8));
         gzipOutputStream.close();
-        return outputStream.toByteArray();
+        String result = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
+        return result;
     }
 
-    public static String decompress(byte[] compressedData) throws IOException {
+    public static String decompress(String compressText) throws IOException {
+        byte[] compressedData = compressText.getBytes(StandardCharsets.UTF_8);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(compressedData);
         GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -26,6 +29,7 @@ public class StringCompression {
             outputStream.write(buffer, 0, bytesRead);
         }
         gzipInputStream.close();
-        return outputStream.toString();
+        String result = outputStream.toString();
+        return result;
     }
 }

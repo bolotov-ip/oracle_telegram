@@ -1,7 +1,6 @@
 package com.bolotov.oraclebot.config;
 
 
-import com.bolotov.oraclebot.config.ControllerDistributor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -22,7 +21,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botName;
 
     @Autowired
-    private ControllerDistributor controllerDistributor;
+    private DispatcherController dispatcherController;
 
     public TelegramBot(@Value("${bot.token}")String token) {
         super(token);
@@ -35,7 +34,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        controllerDistributor.define(update);
+        dispatcherController.dispatch(update);
     }
 
     @EventListener({ContextRefreshedEvent.class})
