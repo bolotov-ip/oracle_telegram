@@ -1,4 +1,4 @@
-package com.bolotov.oraclebot.config;
+package com.bolotov.oraclebot.telegram;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

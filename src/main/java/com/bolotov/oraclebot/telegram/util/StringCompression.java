@@ -1,4 +1,4 @@
-package com.bolotov.oraclebot.util;
+package com.bolotov.oraclebot.telegram.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -1,7 +1,5 @@
 package com.bolotov.oraclebot.telegram;
 
-import com.bolotov.oraclebot.util.StringCompression;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

@@ -13,11 +13,6 @@ public class Role {
         USER, ADMIN;
     }
 
-    private static RoleRepository roleRepository;
-
-    public static void setRoleRepository(RoleRepository roleRepository) {
-        Role.roleRepository = roleRepository;
-    }
 
     @Id
     private Long id;
@@ -43,11 +38,4 @@ public class Role {
         this.name = name;
     }
 
-    public Role save() {
-        return roleRepository.save(this);
-    }
-
-    public void delete() {
-        roleRepository.delete(this);
-    }
 }

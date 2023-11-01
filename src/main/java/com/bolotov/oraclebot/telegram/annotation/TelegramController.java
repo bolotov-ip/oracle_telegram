@@ -1,4 +1,4 @@
-package com.bolotov.oraclebot.annotation;
+package com.bolotov.oraclebot.telegram.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.bolotov.oraclebot.annotation;
+package com.bolotov.oraclebot.telegram.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

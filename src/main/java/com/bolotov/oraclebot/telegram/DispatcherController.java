@@ -1,10 +1,8 @@
-package com.bolotov.oraclebot.config;
+package com.bolotov.oraclebot.telegram;
 
-import com.bolotov.oraclebot.annotation.TelegramAction;
-import com.bolotov.oraclebot.annotation.TelegramController;
+import com.bolotov.oraclebot.telegram.annotation.TelegramAction;
+import com.bolotov.oraclebot.telegram.annotation.TelegramController;
 import com.bolotov.oraclebot.model.Role;
-import com.bolotov.oraclebot.model.User;
-import com.bolotov.oraclebot.telegram.TelegramEvent;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -52,6 +50,7 @@ public class DispatcherController {
 
     @PostConstruct
     public void configureAccess() {
+        accessRuleList = new ArrayList<>();
         accessRuleList.add(new AccessRule("/user*").hasRole("USER"));
     }
 

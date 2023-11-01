@@ -1,8 +1,7 @@
 package com.bolotov.oraclebot.controller;
 
-import com.bolotov.oraclebot.annotation.TelegramAction;
-import com.bolotov.oraclebot.annotation.TelegramController;
-import com.bolotov.oraclebot.model.User;
+import com.bolotov.oraclebot.telegram.annotation.TelegramAction;
+import com.bolotov.oraclebot.telegram.annotation.TelegramController;
 import com.bolotov.oraclebot.service.UserService;
 import com.bolotov.oraclebot.telegram.TelegramEvent;
 import com.bolotov.oraclebot.telegram.TelegramMessage;

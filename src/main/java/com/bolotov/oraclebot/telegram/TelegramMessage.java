@@ -1,11 +1,12 @@
 package com.bolotov.oraclebot.telegram;
 
-import com.bolotov.oraclebot.config.TelegramBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo;
@@ -22,9 +23,14 @@ import java.util.UUID;
 
 public class TelegramMessage {
 
-
-
     private static TelegramBot bot;
+
+    private static List<BotCommand> commands;
+
+    static {
+        commands = new ArrayList<>();
+        commands.add(new BotCommand("/start", "Стартовое меню"));
+    }
 
     public static void setBot(TelegramBot bot) {
         TelegramMessage.bot = bot;
@@ -61,6 +67,11 @@ public class TelegramMessage {
     private int countAllElements;
 
     private int countElementsInPage;
+
+    public TelegramMessage addCommandMenu(String action, String description) {
+        commands.add(new BotCommand(action, description));
+        return this;
+    }
 
     private void addNavigateKeyboard(BotApiMethod<?> msg) throws IOException {
 
@@ -143,6 +154,10 @@ public class TelegramMessage {
 
     public void send() {
         try{
+            if(commands!=null) {
+                bot.execute(new SetMyCommands(commands, new BotCommandScopeDefault(), null));
+            }
+
             getSendMediaGroupList().stream().forEach(mediaGroup -> {
                 try {
                     bot.execute(mediaGroup);

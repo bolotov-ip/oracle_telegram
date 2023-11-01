@@ -12,11 +12,6 @@ import java.util.Set;
 @Table(name = "users")
 public class User {
 
-    private static UserRepository userRepository;
-
-    public static void setUserRepository(UserRepository userRepository) {
-        User.userRepository = userRepository;
-    }
 
     @Id
     @Column(name = "chat_id")
@@ -120,13 +115,5 @@ public class User {
     @Override
     public String toString() {
         return username;
-    }
-
-    public User save() {
-       return userRepository.save(this);
-    }
-
-    public void delete() {
-        userRepository.delete(this);
     }
 }
