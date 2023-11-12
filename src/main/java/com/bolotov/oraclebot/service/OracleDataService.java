@@ -1,25 +1,20 @@
 package com.bolotov.oraclebot.service;
 
 
-import com.bolotov.oraclebot.exception.OraclePropertyServiceException;
-import com.bolotov.oraclebot.model.Product;
+import com.bolotov.oraclebot.exception.AddOracleException;
+import com.bolotov.oraclebot.exception.AddSourceException;
+import com.bolotov.oraclebot.model.SourceSet;
+import com.bolotov.oraclebot.model.Oracle;
 
 /**Сервис управляющий ресурсами для предсказаний*/
-public interface OraclePropertyService {
+public interface OracleDataService {
 
-    /**Формирование таблиц ресурсов на основе данных в файловой системе сервера из
-     * application_properties bot.catalog.source*/
-    public void synchronizeWithFiles() throws OraclePropertyServiceException;
+    public SourceSet addSourceSet(String json) throws AddSourceException;
 
-    /**Добавляет Product созданный из json строки*/
-    public Product addProductByJson(String jsonProduct) throws OraclePropertyServiceException;
+    public Oracle addOracle(String json) throws AddOracleException;
 
-    /**Удаляет продукт по id*/
-    public boolean removeProduct(Long productId);
+    public void deleteOracle(Long id);
 
-    /**Удаляет все Source, SourceSet, SourceGroup, все ссылки на ресурсы в Product очищаются*/
-    public void removeAllSources();
+    public void deleteSourceSet(Long id);
 
-    /**Удаляет все Product*/
-    public void removeAllProducts();
 }

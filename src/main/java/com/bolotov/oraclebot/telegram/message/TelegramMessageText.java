@@ -1,8 +1,14 @@
-package com.bolotov.oraclebot.telegram;
+package com.bolotov.oraclebot.telegram.message;
 
-public interface TelegramTextMessage extends BasicMessage {
+public interface TelegramMessageText extends TelegramMessage {
 
-    public BasicMessage addButton(String name, String action);
+    public TelegramMessage addButton(String name, String action);
 
-    public BasicMessage addItemMenu(String name, String action);
+    public TelegramMessage addLayoutButton(int ...args);
+
+    public TelegramMessage setPageSize(int countElementInPage);
+
+    public TelegramMessage setCurrentPage(int currentPage);
+
+    public TelegramMessage setAction(String action);
 }

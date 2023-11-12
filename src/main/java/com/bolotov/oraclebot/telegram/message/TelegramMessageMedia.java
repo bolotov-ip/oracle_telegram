@@ -1,8 +1,8 @@
-package com.bolotov.oraclebot.telegram;
+package com.bolotov.oraclebot.telegram.message;
 
 import java.io.File;
 
-public interface TelegramMessageMedia extends BasicMessage {
+public interface TelegramMessageMedia extends TelegramMessage {
 
     public TelegramMessageMedia addPhotoTelegramId(String telegramId);
 

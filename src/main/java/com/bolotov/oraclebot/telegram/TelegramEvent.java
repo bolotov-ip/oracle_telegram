@@ -8,6 +8,8 @@ import java.util.Map;
 
 public class TelegramEvent {
 
+    public static final String TEXT_TRIGGER = "command:/";
+
     public static TelegramEvent valueOf(Update update){
         TelegramEvent event = new TelegramEvent();
         try{
@@ -17,6 +19,14 @@ public class TelegramEvent {
             Map<String, String> values = new HashMap<>();
             if(update.hasMessage()) {
                 action = update.getMessage().getText();
+                if(!action.startsWith("/")) {
+                    if(action.startsWith(TEXT_TRIGGER)){
+                        String messageText = update.getMessage().getText();
+                        action = messageText.substring(TEXT_TRIGGER.length()-1, messageText.indexOf(" "));
+                        String text = messageText.substring(messageText.indexOf(" ") + 1);
+                        event.setText(text);
+                    }
+                }
                 chatId = update.getMessage().getChatId();
             } else if (update.hasCallbackQuery()) {
                 String callbackText = update.getCallbackQuery().getData();
@@ -46,6 +56,8 @@ public class TelegramEvent {
     private Integer messageId;
 
     private Map<String, String> values;
+
+    private String text;
 
     public String getActionName() {
         return actionName;
@@ -77,5 +89,13 @@ public class TelegramEvent {
 
     public void setMessageId(Integer messageId) {
         this.messageId = messageId;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

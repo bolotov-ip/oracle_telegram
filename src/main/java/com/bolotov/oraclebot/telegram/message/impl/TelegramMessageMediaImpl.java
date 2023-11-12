@@ -1,9 +1,11 @@
-package com.bolotov.oraclebot.telegram;
+package com.bolotov.oraclebot.telegram.message.impl;
 
+import com.bolotov.oraclebot.telegram.message.TelegramMessage;
+import com.bolotov.oraclebot.telegram.TelegramBot;
+import com.bolotov.oraclebot.telegram.message.TelegramMessageMedia;
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.media.InputMedia;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto;
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaVideo;
@@ -12,44 +14,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.File;
 import java.util.*;
 
-public class TelegramMessageMediaImpl implements TelegramMessageMedia{
+public class TelegramMessageMediaImpl extends  TelegramMessageImpl implements TelegramMessageMedia {
 
-    private TelegramBot bot;
-
-    private String text;
-
-    private Long chatId;
 
     private List<InputMedia> medias = new ArrayList<>();
 
-    public Long getChatId() {
-        return chatId;
-    }
+    private List<String> photosId = new ArrayList<>();
+
+    private List<String> videosId = new ArrayList<>();
 
     @Override
-    public TelegramMessageMedia setChatId(Long chatId) {
-        this.chatId = chatId;
-        return this;
-    }
-
-    @Override
-    public BasicMessage setBot(TelegramBot bot) {
-        this.bot = bot;
-        return this;
-    }
-
-    @Override
-    public BasicMessage setText(String text) {
-        this.text = text;
-        return null;
-    }
-
-    @Override
-    public List<Message> send() throws TelegramApiException {
+    public void send() throws TelegramApiException {
         if(medias.size()>0) {
             medias.get(0).setCaption(text!=null ? text : "");
             SendMediaGroup sendMediaGroup = new SendMediaGroup(String.valueOf(chatId), medias);
-            return bot.execute(sendMediaGroup);
+            parseFileId(bot.execute(sendMediaGroup));
         }
         else
             throw new TelegramApiException("Не добавлены медиа файлы");
@@ -81,5 +60,37 @@ public class TelegramMessageMediaImpl implements TelegramMessageMedia{
         media.setMedia(file, UUID.randomUUID().toString());
         medias.add(media);
         return this;
+    }
+
+    public List<String> getPhotosId() {
+        return photosId;
+    }
+
+    public List<String> getVideosId() {
+        return videosId;
+    }
+
+    private PhotoSize getMaxPhotoSize(List<PhotoSize> photos) {
+        PhotoSize maxPhotoSize = null;
+        for(PhotoSize photoSize : photos) {
+            int currentMaxSize = maxPhotoSize != null ? maxPhotoSize.getFileSize() : 0;
+            if(photoSize.getFileSize() > currentMaxSize)
+                maxPhotoSize = photoSize;
+        }
+        return maxPhotoSize;
+    }
+
+    private void parseFileId(List<Message> messages) {
+        List<String> results = new ArrayList<>();
+        for(Message message : messages) {
+            if(message.hasPhoto()) {
+                PhotoSize photoSize = getMaxPhotoSize(message.getPhoto());
+                String telegramId = photoSize.getFileId();
+                photosId.add(telegramId);
+            }
+            if(message.hasVideo()) {
+                videosId.add(message.getVideo().getFileId());
+            }
+        }
     }
 }

@@ -2,10 +2,7 @@ package com.bolotov.oraclebot.service.impl;
 
 import com.bolotov.oraclebot.exception.AddOracleException;
 import com.bolotov.oraclebot.exception.AddSourceException;
-import com.bolotov.oraclebot.model.OracleCategory;
-import com.bolotov.oraclebot.model.SourceSet;
-import com.bolotov.oraclebot.model.Oracle;
-import com.bolotov.oraclebot.model.User;
+import com.bolotov.oraclebot.model.*;
 import com.bolotov.oraclebot.repository.*;
 import com.bolotov.oraclebot.service.OracleDataService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,6 +37,13 @@ public class OracleDataServiceImpl implements OracleDataService {
     @Value("${bot.temp}")
     private String pathTemp;
 
+    List<String> imageFormats = new ArrayList<>();
+    List<String> videoFormats = new ArrayList<>();
+    {
+        imageFormats.add(".png"); imageFormats.add(".jpg"); imageFormats.add(".jpeg"); imageFormats.add(".gif"); imageFormats.add(".jp2"); imageFormats.add(".raw");
+        videoFormats.add(".mp4"); videoFormats.add(".wmv"); videoFormats.add(".avi"); videoFormats.add(".m4v"); videoFormats.add(".mov"); videoFormats.add(".mpg");
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SourceSet addSourceSet(String json) throws AddSourceException {
@@ -60,10 +64,11 @@ public class OracleDataServiceImpl implements OracleDataService {
                 while(names.hasNext()) {
                     String nameSource = names.next();
                     String url = sourceNode.get(nameSource).textValue();
+                    Source.Type type = getType(url);
                     String filename = pathTemp + File.separator + UUID.randomUUID() +url.substring(url.lastIndexOf("."));
                     File sourceFile = downloadFile(url, filename);
                     String telegramId = getTelegramId(sourceFile);
-                    sourceSet.addSource(nameSource, telegramId);
+                    sourceSet.addSource(nameSource, telegramId, type);
                 }
             }
             sourceSetRepository.save(sourceSet);
@@ -170,5 +175,14 @@ public class OracleDataServiceImpl implements OracleDataService {
     private String getTelegramId(File file) {
 
         return null;
+    }
+
+    private Source.Type getType(String filename) throws AddSourceException {
+        String format = filename.substring(filename.lastIndexOf("."));
+        if(videoFormats.contains(format))
+            return Source.Type.VIDEO;
+        if(imageFormats.contains(format))
+            return Source.Type.PHOTO;
+        throw new AddSourceException("Не читается формат файла из адреса");
     }
 }

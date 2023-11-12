@@ -3,13 +3,15 @@ package com.bolotov.oraclebot.telegram.message;
 import com.bolotov.oraclebot.telegram.TelegramBot;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-public interface BasicMessage {
+import java.io.IOException;
 
-    public BasicMessage setChatId(Long chatId);
+public interface TelegramMessage {
 
-    public BasicMessage setBot(TelegramBot bot);
+    public TelegramMessage setChatId(Long chatId);
 
-    public BasicMessage setText(String text);
+    public TelegramMessage setBot(TelegramBot bot);
 
-    public Object send() throws TelegramApiException;
+    public TelegramMessage setText(String text);
+
+    public void send() throws TelegramApiException;
 }

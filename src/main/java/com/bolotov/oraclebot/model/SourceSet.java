@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.*;
 
 @Entity(name = "source_set")
-public class MediaSourceSet {
+public class SourceSet {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -14,17 +14,19 @@ public class MediaSourceSet {
     @Column(name = "name", unique = true)
     private String name;
 
-    @Column(name = "name")
+    @Column(name = "group_name")
     private String groupName;
 
-    @ElementCollection
-    @CollectionTable(name="source", joinColumns = @JoinColumn(name = "source_set_id"))
-    @MapKeyColumn(name = "key")
-    @Column(name = "telegram_id")
-    private Map<String, String> sources = new HashMap<>();
+    @OneToMany
+    @JoinColumn(name = "source_set_id")
+    Set<Source> sources = new HashSet<>();
 
-    public void addSource(String key, String telegramId) {
-        sources.put(key, telegramId);
+    public void addSource(String key, String telegramId, Source.Type type) {
+        Source source = new Source();
+        source.setName(key);
+        source.setTelegramId(telegramId);
+        source.setType(type);
+        sources.add(source);
     }
 
     public Long getId() {
@@ -51,11 +53,4 @@ public class MediaSourceSet {
         this.groupName = groupName;
     }
 
-    public Map<String, String> getSources() {
-        return sources;
-    }
-
-    public void setSources(Map<String, String> sources) {
-        this.sources = sources;
-    }
 }
