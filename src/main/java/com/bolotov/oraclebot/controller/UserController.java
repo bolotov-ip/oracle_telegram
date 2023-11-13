@@ -20,7 +20,7 @@ public class UserController {
 
     @TelegramAction(action="/user/freeproduct")
     public void freeRandomProduct(TelegramEvent event) throws TelegramApiException {
-        TelegramMessageText telegramMessage = messageFactory.newTelegramMessageEditText(event, "Здесь будет показан случайный бесплатный продукт");
+        TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Здесь будет показан случайный бесплатный продукт");
         telegramMessage.addButton( "назад", "/start");
         telegramMessage.send();
     }

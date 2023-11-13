@@ -33,21 +33,17 @@ public class TelegramMessageFactoryImpl implements TelegramMessageFactory {
     }
 
     public TelegramMessageText newTelegramMessageText(TelegramEvent event, String text) {
-        TelegramMessageText messageText = new TelegramMessageTextImpl();
+        TelegramMessageText messageText = null;
+        if(event.isCallback()) {
+            messageText = new TelegramMessageEditTextImpl();
+            ((TelegramMessageEditText)messageText).setMessageId(event.getMessageId());
+        }
+        else
+            messageText= new TelegramMessageTextImpl();
         messageText.setBot(bot);
         messageText.setAction(event.getActionName());
         messageText.setChatId(event.getChatId());
         messageText.setText(text);
-        return messageText;
-    }
-
-    public TelegramMessageText newTelegramMessageEditText(TelegramEvent event, String text) {
-        TelegramMessageEditText messageText = new TelegramMessageEditTextImpl();
-        messageText.setBot(bot);
-        messageText.setAction(event.getActionName());
-        messageText.setChatId(event.getChatId());
-        messageText.setText(text);
-        messageText.setMessageId(event.getMessageId());
         return messageText;
     }
 

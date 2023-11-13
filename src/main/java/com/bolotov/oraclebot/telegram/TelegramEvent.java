@@ -31,6 +31,7 @@ public class TelegramEvent {
                 chatId = update.getCallbackQuery().getMessage().getChatId();
                 messageId = update.getCallbackQuery().getMessage().getMessageId();
                 values = button.getValues();
+                event.setCallback(true);
             } else if (update.hasPreCheckoutQuery()) {
 
             }
@@ -54,6 +55,8 @@ public class TelegramEvent {
     private Map<String, String> values;
 
     private String text;
+
+    private boolean isCallback = false;
 
     public String getActionName() {
         return actionName;
@@ -93,5 +96,13 @@ public class TelegramEvent {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public boolean isCallback() {
+        return isCallback;
+    }
+
+    public void setCallback(boolean callback) {
+        isCallback = callback;
     }
 }
