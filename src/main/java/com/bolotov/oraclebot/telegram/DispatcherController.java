@@ -23,8 +23,7 @@ public class DispatcherController {
     @Autowired
     private ApplicationContext applicationContext;
 
-    public void dispatch(Update update) {
-        TelegramEvent event = TelegramEvent.valueOf(update);
+    public void dispatch(TelegramEvent event) {
         String action = event.getActionName();
 
         Map<String, Object> controllers =  applicationContext.getBeansWithAnnotation(TelegramController.class);
@@ -35,7 +34,11 @@ public class DispatcherController {
                 String actionMethod = annotation.action();
                 if(action.equals(actionMethod)){
                     try {
-                        method.invoke(controller, event);
+                        String redirect = (String) method.invoke(controller, event);
+                        if(redirect != null) {
+                            event.setActionName(redirect);
+                            dispatch(event);
+                        }
                         return;
                     } catch (IllegalAccessException e) {
                         throw new RuntimeException(e);

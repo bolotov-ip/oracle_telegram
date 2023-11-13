@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class TelegramEvent {
 
-    public static final String TEXT_TRIGGER = "command:/";
-
     public static TelegramEvent valueOf(Update update){
         TelegramEvent event = new TelegramEvent();
         try{
@@ -20,12 +18,10 @@ public class TelegramEvent {
             if(update.hasMessage()) {
                 action = update.getMessage().getText();
                 if(!action.startsWith("/")) {
-                    if(action.startsWith(TEXT_TRIGGER)){
-                        String messageText = update.getMessage().getText();
-                        action = messageText.substring(TEXT_TRIGGER.length()-1, messageText.indexOf(" "));
-                        String text = messageText.substring(messageText.indexOf(" ") + 1);
-                        event.setText(text);
-                    }
+                    String messageText = update.getMessage().getText();
+                    action = messageText.substring(messageText.indexOf(":"));
+                    String text = messageText.substring(messageText.indexOf(" ") + 1);
+                    event.setText(text);
                 }
                 chatId = update.getMessage().getChatId();
             } else if (update.hasCallbackQuery()) {
