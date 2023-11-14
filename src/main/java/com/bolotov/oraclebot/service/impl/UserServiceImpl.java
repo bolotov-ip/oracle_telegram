@@ -1,15 +1,19 @@
 package com.bolotov.oraclebot.service.impl;
 
+import com.bolotov.oraclebot.model.Role;
+import com.bolotov.oraclebot.model.SourceSet;
 import com.bolotov.oraclebot.model.User;
 import com.bolotov.oraclebot.repository.RoleRepository;
 import com.bolotov.oraclebot.repository.UserRepository;
+import com.bolotov.oraclebot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
@@ -17,6 +21,7 @@ public class UserServiceImpl {
     @Autowired
     RoleRepository roleRepository;
 
+    @Override
     public User getUser(Long chatId) {
         Optional<User> userOptional = userRepository.findById(chatId);
         if(userOptional.isPresent())
@@ -24,8 +29,35 @@ public class UserServiceImpl {
         return null;
     }
 
+    @Override
     public User authentication(User user) {
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public boolean addRole(User user, Role.RoleName roleName) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteRole(User user, Role.RoleName roleName) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteUser(User user) {
+        return false;
+    }
+
+    @Override
+    public List<User> getUserByRoleName(Role.RoleName roleName) {
+        return null;
+    }
+
+    @Override
+    public void selectSourceSet(User user, SourceSet set) {
+        user.addSelectSource(set.getGroupName(), set.getName());
+        userRepository.save(user);
     }
 }

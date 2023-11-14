@@ -19,11 +19,12 @@ public class TelegramEvent {
                 action = update.getMessage().getText();
                 if(!action.startsWith("/")) {
                     String messageText = update.getMessage().getText();
-                    action = messageText.substring(messageText.indexOf(":"));
+                    action = "/" + messageText.substring(0, messageText.indexOf(":"));
                     String text = messageText.substring(messageText.indexOf(" ") + 1);
                     event.setText(text);
                 }
                 chatId = update.getMessage().getChatId();
+                event.setUsername(update.getMessage().getChat().getUserName());
             } else if (update.hasCallbackQuery()) {
                 String callbackText = update.getCallbackQuery().getData();
                 TelegramButton button = TelegramButton.valueOf(callbackText);
@@ -32,6 +33,7 @@ public class TelegramEvent {
                 messageId = update.getCallbackQuery().getMessage().getMessageId();
                 values = button.getValues();
                 event.setCallback(true);
+                event.setUsername(update.getCallbackQuery().getMessage().getChat().getUserName());
             } else if (update.hasPreCheckoutQuery()) {
 
             }
@@ -55,6 +57,8 @@ public class TelegramEvent {
     private Map<String, String> values;
 
     private String text;
+
+    private String username;
 
     private boolean isCallback = false;
 
@@ -104,5 +108,13 @@ public class TelegramEvent {
 
     public void setCallback(boolean callback) {
         isCallback = callback;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

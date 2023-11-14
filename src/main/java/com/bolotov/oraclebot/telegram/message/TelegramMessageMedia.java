@@ -1,6 +1,7 @@
 package com.bolotov.oraclebot.telegram.message;
 
 import java.io.File;
+import java.util.List;
 
 public interface TelegramMessageMedia extends TelegramMessage {
 
@@ -11,5 +12,9 @@ public interface TelegramMessageMedia extends TelegramMessage {
     public TelegramMessageMedia addVideoTelegramId(String telegramId);
 
     public TelegramMessageMedia addVideoFile(File file);
+
+    public List<String> getPhotosId();
+
+    public List<String> getVideosId();
 
 }

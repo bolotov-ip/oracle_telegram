@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -34,12 +36,22 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    @ElementCollection
+    @CollectionTable(name="select_sources", joinColumns = @JoinColumn(name = "user_id"))
+    @MapKeyColumn(name = "group_name")
+    @Column(name = "source_set_name")
+    Map<String, String> selectSources = new HashMap<>();
+
     public boolean isAdmin() {
         for(Role role : roles){
             if(role.getName().equals(Role.RoleName.ADMIN))
                 return true;
         }
         return false;
+    }
+
+    public void addSelectSource(String groupName, String sourceSetName) {
+        selectSources.put(groupName, sourceSetName);
     }
 
     public Long getChatId() {
@@ -96,6 +108,14 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Map<String, String> getSelectSources() {
+        return selectSources;
+    }
+
+    public void setSelectSources(Map<String, String> selectSources) {
+        this.selectSources = selectSources;
     }
 
     @Override

@@ -17,7 +17,7 @@ public class SourceSet {
     @Column(name = "group_name")
     private String groupName;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "source_set_id")
     Set<Source> sources = new HashSet<>();
 
@@ -53,4 +53,11 @@ public class SourceSet {
         this.groupName = groupName;
     }
 
+    public Set<Source> getSources() {
+        return sources;
+    }
+
+    public void setSources(Set<Source> sources) {
+        this.sources = sources;
+    }
 }

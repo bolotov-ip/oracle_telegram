@@ -5,6 +5,8 @@ import com.bolotov.oraclebot.exception.AddSourceException;
 import com.bolotov.oraclebot.model.*;
 import com.bolotov.oraclebot.repository.*;
 import com.bolotov.oraclebot.service.OracleDataService;
+import com.bolotov.oraclebot.telegram.message.TelegramMessageFactory;
+import com.bolotov.oraclebot.telegram.message.TelegramMessageMedia;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -28,12 +31,15 @@ public class OracleDataServiceImpl implements OracleDataService {
     @Autowired
     private SourceSetRepository sourceSetRepository;
     @Autowired
+    private SourceRepository sourceRepository;
+    @Autowired
     private UserRepository userRepository;
     @Autowired
     private OracleCategoryRepository categoryRepository;
     @Autowired
     OracleRepository oracleRepository;
-
+    @Autowired
+    TelegramMessageFactory messageFactory;
     @Value("${bot.temp}")
     private String pathTemp;
 
@@ -137,6 +143,26 @@ public class OracleDataServiceImpl implements OracleDataService {
 
     }
 
+    @Override
+    public List<String> getAllGroupsSource() {
+
+        return sourceSetRepository.getAllGroups();
+    }
+
+    @Override
+    public List<SourceSet> getSourceSetByGroup(String groupName) {
+        List<SourceSet> sourceSets = sourceSetRepository.findByGroupName(groupName);
+        return sourceSets;
+    }
+
+    @Override
+    public SourceSet getSourceSet(Long id) {
+        Optional<SourceSet> sourceSetOptional = sourceSetRepository.findById(id);
+        if(sourceSetOptional.isPresent())
+            return sourceSetOptional.get();
+        return null;
+    }
+
     private List<OracleCategory> getOracleCategories(List<String> categoryTree) {
         List<OracleCategory> categories = new ArrayList<>();
         OracleCategory parent = null;
@@ -172,7 +198,24 @@ public class OracleDataServiceImpl implements OracleDataService {
         return new File(filename);
     }
 
-    private String getTelegramId(File file) {
+    private String getTelegramId(File file) throws AddSourceException, TelegramApiException {
+        User owner = userRepository.findByUsername("bolotov_ip");
+        TelegramMessageMedia messageMedia = messageFactory.newTelegramMessageMedia(owner.getChatId(), "");
+        if(getType(file.getName()).equals(Source.Type.VIDEO)){
+            messageMedia.addVideoFile(file);
+            messageMedia.send();
+            List<String> videosId = messageMedia.getVideosId();
+            if(videosId.size()>0)
+                return videosId.get(0);
+        }
+
+        if(getType(file.getName()).equals(Source.Type.PHOTO)){
+            messageMedia.addPhotoFile(file);
+            messageMedia.send();
+            List<String> photosId = messageMedia.getPhotosId();
+            if(photosId.size()>0)
+                return photosId.get(0);
+        }
 
         return null;
     }

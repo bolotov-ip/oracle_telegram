@@ -1,5 +1,6 @@
 package com.bolotov.oraclebot.controller;
 
+import com.bolotov.oraclebot.service.UserService;
 import com.bolotov.oraclebot.telegram.annotation.TelegramAction;
 import com.bolotov.oraclebot.telegram.annotation.TelegramController;
 import com.bolotov.oraclebot.model.User;
@@ -15,7 +16,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 public class StartController {
 
     @Autowired
-    private UserServiceImpl userServiceImpl;
+    private UserService userService;
 
     @Autowired
     TelegramMessageFactory messageFactory;
@@ -23,9 +24,17 @@ public class StartController {
     @TelegramAction(action="/start")
     public void start(TelegramEvent event) {
         TelegramMessageMenu messageMenu = messageFactory.newTelegramMessageMenu(event.getChatId());
-        messageMenu.addItemMenu("Ресурсы", "/source");
+        messageMenu.addItemMenu("Главное меню", "/start");
+        messageMenu.addItemMenu("Настроить отображение медиа", "/src_groups");
 
-        User currentUser = userServiceImpl.getUser(event.getChatId());
+        User currentUser = userService.getUser(event.getChatId());
+        if(currentUser == null) {
+            currentUser = new User();
+            currentUser.setChatId(event.getChatId());
+            currentUser.setUsername(event.getUsername());
+            userService.authentication(currentUser);
+        }
+
         TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Главное меню");
         telegramMessage.addLayoutButton(2,1);
         telegramMessage.addButton("Тарологи", "/user/freeproduct");

@@ -9,9 +9,8 @@ import java.util.Set;
 public class Role {
 
     public enum RoleName {
-        USER, ADMIN;
+        USER, ADMIN, OWNER;
     }
-
 
     @Id
     private Long id;

@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UserService {
 
+    public User getUser(Long chatId);
+
     public User authentication(User user);
 
     public boolean addRole(User user, Role.RoleName roleName);
