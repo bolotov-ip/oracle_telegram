@@ -2,10 +2,7 @@ package com.bolotov.oraclebot.model;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name = "oracle_category")
 public class OracleCategory {
@@ -22,8 +19,8 @@ public class OracleCategory {
     private OracleCategory parentId;
 
     @Transient
-    @OneToMany(mappedBy = "oracle_category")
-    private Set<Oracle> oracles;
+    @OneToMany(mappedBy = "category")
+    private Set<Oracle> oracles = new HashSet<>();
 
     public String getHierarchy() {
         List<String> names = new ArrayList<>();

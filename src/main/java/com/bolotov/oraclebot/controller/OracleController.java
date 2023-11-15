@@ -38,11 +38,36 @@ public class OracleController {
                 telegramMessage.addButton( category.getName(), "/view_group?category=" + category.getId());
             }
             if(parentCategory!=null) {
-                for(Oracle oracle : parentCategory.getOracles()) {
+                for(Oracle oracle : oracleService.getOraclesByCategory(parentCategory)) {
                     telegramMessage.addButton( oracle.getName(), "/view_oracle?oracle=" + oracle.getId());
                 }
             }
-            telegramMessage.addButton( "Назад", "/start");
+            if(parentCategoryId == null)
+                telegramMessage.addButton( "Назад", "/start" );
+            else{
+                OracleCategory parentParent = parentCategory==null? null: parentCategory.getParentId();
+
+                telegramMessage.addButton( "Назад", "/view_group?category=" + parentParent == null ? "": String.valueOf(parentParent.getId()));
+
+            }
+            telegramMessage.send();
+        } catch (Exception e) {
+            event.setText("Не удалось добавить ресурс.\nТекст ошибки:\n" + e.getMessage());
+            return "/error";
+        }
+        return null;
+    }
+
+    @TelegramAction(action="/view_oracle")
+    public String viewOracle(TelegramEvent event) {
+        try {
+            Long oracleId = Long.valueOf(event.getValues().get("oracle"));
+            Oracle oracle = oracleService.getOracleById(oracleId);
+            String text = String.format("%s\n%s\nСтоимость: %s рублей\nКоличество использований %d раз в %d дней",
+                    oracle.getName(), oracle.getDescription(),oracle.getPrice(), oracle.getLimit(), oracle.getCountDay());
+            TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, text);
+            telegramMessage.addButton( oracle.getName(), "/purchase?oracle=" + oracle.getId());
+            telegramMessage.addButton( "Назад", "/view_group?category=" + oracle.getCategory().getId());
             telegramMessage.send();
         } catch (Exception e) {
             event.setText("Не удалось добавить ресурс.\nТекст ошибки:\n" + e.getMessage());

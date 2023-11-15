@@ -6,6 +6,7 @@ import com.bolotov.oraclebot.model.OracleCategory;
 import com.bolotov.oraclebot.model.Purchase;
 import com.bolotov.oraclebot.model.User;
 import com.bolotov.oraclebot.repository.OracleCategoryRepository;
+import com.bolotov.oraclebot.repository.OracleRepository;
 import com.bolotov.oraclebot.service.OracleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class OracleServiceImpl implements OracleService {
 
     @Autowired
     OracleCategoryRepository categoryRepository;
+    @Autowired
+    OracleRepository oracleRepository;
 
     @Override
     public Purchase purchaseFree(User user, Oracle product) throws OracleServiceException {
@@ -46,8 +49,12 @@ public class OracleServiceImpl implements OracleService {
 
     @Override
     public List<OracleCategory> getCategoriesByParent(Long parentId) {
+        if(parentId == null) {
+            return categoryRepository.getCategoryRoot();
+        }
         OracleCategory category = getCategoryById(parentId);
-        return categoryRepository.getCategoriesByParent(category);
+        List<OracleCategory> categories = categoryRepository.getCategoriesByParent(category);
+        return categories;
     }
 
     @Override
@@ -55,5 +62,17 @@ public class OracleServiceImpl implements OracleService {
         if(id==null)
             return null;
         return categoryRepository.findById(id).get();
+    }
+
+    @Override
+    public Oracle getOracleById(Long id) {
+        if(id==null)
+            return null;
+        return oracleRepository.findById(id).get();
+    }
+
+    @Override
+    public List<Oracle> getOraclesByCategory(OracleCategory oracleCategory) {
+        return oracleRepository.findByCategory(oracleCategory);
     }
 }

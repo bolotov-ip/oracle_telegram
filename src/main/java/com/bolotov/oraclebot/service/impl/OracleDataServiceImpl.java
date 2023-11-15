@@ -169,7 +169,12 @@ public class OracleDataServiceImpl implements OracleDataService {
         List<OracleCategory> categories = new ArrayList<>();
         OracleCategory parent = null;
         for(String nameCategory : categoryTree) {
-            OracleCategory category = categoryRepository.getCategory(nameCategory, parent);
+
+            OracleCategory category = null;
+            if(parent == null)
+                category = categoryRepository.getCategoryWithParentNull(nameCategory);
+            else
+                category = categoryRepository.getCategory(nameCategory, parent);
             if(category == null) {
                 category = new OracleCategory();
                 category.setName(nameCategory);

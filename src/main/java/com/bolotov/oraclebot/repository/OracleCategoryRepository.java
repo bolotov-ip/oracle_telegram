@@ -12,6 +12,14 @@ public interface OracleCategoryRepository extends JpaRepository<OracleCategory, 
     @Query("SELECT oc FROM oracle_category oc where oc.name =:nameCategory and oc.parentId =:parentCategory")
     public OracleCategory getCategory(@Param("nameCategory") String nameCategory,  @Param("parentCategory") OracleCategory parentCategory);
 
+
+    @Query("SELECT oc FROM oracle_category oc where oc.name =:nameCategory and oc.parentId is null")
+    public OracleCategory getCategoryWithParentNull(@Param("nameCategory") String nameCategory);
+
+
     @Query("SELECT oc FROM oracle_category oc where oc.parentId =:parentCategory")
     public List<OracleCategory> getCategoriesByParent( @Param("parentCategory") OracleCategory parentCategory);
+
+    @Query("SELECT oc FROM oracle_category oc where oc.parentId is null")
+    public List<OracleCategory> getCategoryRoot();
 }

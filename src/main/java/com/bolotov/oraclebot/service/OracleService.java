@@ -23,4 +23,9 @@ public interface OracleService {
     public List<OracleCategory> getCategoriesByParent(Long parentId);
 
     public OracleCategory getCategoryById(Long id);
+
+    public Oracle getOracleById(Long id);
+
+    public List<Oracle> getOraclesByCategory(OracleCategory oracleCategory);
+
 }
