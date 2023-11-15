@@ -43,6 +43,20 @@ public class SourceController {
         return null;
     }
 
+    @TelegramAction(action="/add_oracle")
+    public String addOracle(TelegramEvent event) {
+        try {
+            oracleDataService.addOracle(event.getText());
+            TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Загрузка ресурсов успешно выполнена");
+            telegramMessage.addButton( "Назад", "/start");
+            telegramMessage.send();
+        } catch (Exception e) {
+            event.setText("Не удалось добавить ресурс.\nТекст ошибки:\n" + e.getMessage());
+            return "/error";
+        }
+        return null;
+    }
+
     @TelegramAction(action="/src_groups")
     public String viewGroups(TelegramEvent event) {
         try {

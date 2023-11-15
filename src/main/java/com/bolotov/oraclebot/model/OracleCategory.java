@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "oracle_category")
 public class OracleCategory {
@@ -19,6 +20,10 @@ public class OracleCategory {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private OracleCategory parentId;
+
+    @Transient
+    @OneToMany(mappedBy = "oracle_category")
+    private Set<Oracle> oracles;
 
     public String getHierarchy() {
         List<String> names = new ArrayList<>();
@@ -54,5 +59,13 @@ public class OracleCategory {
 
     public void setParentId(OracleCategory parentId) {
         this.parentId = parentId;
+    }
+
+    public Set<Oracle> getOracles() {
+        return oracles;
+    }
+
+    public void setOracles(Set<Oracle> oracles) {
+        this.oracles = oracles;
     }
 }

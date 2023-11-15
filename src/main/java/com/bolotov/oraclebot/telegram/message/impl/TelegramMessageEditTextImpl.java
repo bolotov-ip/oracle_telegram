@@ -20,7 +20,7 @@ public class TelegramMessageEditTextImpl extends TelegramMessageTextImpl impleme
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
             setButtons(editMessageText);
-            if(countElementsInPage>buttons.size())
+            if(buttons.size()>countElementsInPage || currentPageNumber>1)
                 addNavigateKeyboard(editMessageText);
             bot.execute(editMessageText);
         }

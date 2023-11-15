@@ -2,6 +2,7 @@ package com.bolotov.oraclebot.service;
 
 import com.bolotov.oraclebot.exception.OracleServiceException;
 import com.bolotov.oraclebot.model.Oracle;
+import com.bolotov.oraclebot.model.OracleCategory;
 import com.bolotov.oraclebot.model.Purchase;
 import com.bolotov.oraclebot.model.User;
 
@@ -18,4 +19,8 @@ public interface OracleService {
     public List<Purchase> getFreePurchase();
 
     public List<Purchase> getTargetPurchase();
+
+    public List<OracleCategory> getCategoriesByParent(Long parentId);
+
+    public OracleCategory getCategoryById(Long id);
 }

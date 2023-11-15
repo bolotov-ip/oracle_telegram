@@ -16,7 +16,6 @@ public class Purchase {
     @Column(name = "id", nullable = false)
     private Long id;
 
-
     @ManyToOne
     @JoinColumn(name = "customer_chat_id")
     private User customer;
@@ -28,6 +27,8 @@ public class Purchase {
     private Timestamp datePurchase;
 
     private double price;
+
+    private Long oracleId;
 
     @Enumerated
     private STATE state = STATE.PURCHASED;
@@ -56,5 +57,37 @@ public class Purchase {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Timestamp getDatePurchase() {
+        return datePurchase;
+    }
+
+    public void setDatePurchase(Timestamp datePurchase) {
+        this.datePurchase = datePurchase;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public Long getOracleId() {
+        return oracleId;
+    }
+
+    public void setOracleId(Long oracleId) {
+        this.oracleId = oracleId;
+    }
+
+    public STATE getState() {
+        return state;
+    }
+
+    public void setState(STATE state) {
+        this.state = state;
     }
 }

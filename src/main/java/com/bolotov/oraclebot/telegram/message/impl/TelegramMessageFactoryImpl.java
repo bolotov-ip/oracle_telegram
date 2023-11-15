@@ -44,6 +44,9 @@ public class TelegramMessageFactoryImpl implements TelegramMessageFactory {
         messageText.setAction(event.getActionName());
         messageText.setChatId(event.getChatId());
         messageText.setText(text);
+        messageText.setFullAction(event.getFullAction());
+        String numberPage = event.getValues().get("np");
+        messageText.setCurrentPage(Integer.valueOf(numberPage==null? "1"  : numberPage));
         return messageText;
     }
 

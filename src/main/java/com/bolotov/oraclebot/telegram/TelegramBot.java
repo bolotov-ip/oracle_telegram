@@ -21,7 +21,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     private String botName;
 
     @Autowired
-    private DispatcherController dispatcherController;
+    private TelegramDispatcher telegramDispatcher;
 
     public TelegramBot(@Value("${bot.token}")String token) {
         super(token);
@@ -35,7 +35,7 @@ public class TelegramBot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         TelegramEvent event = TelegramEvent.valueOf(update);
-        dispatcherController.dispatch(event);
+        telegramDispatcher.dispatch(event);
     }
 
     @EventListener({ContextRefreshedEvent.class})

@@ -8,7 +8,9 @@ public interface TelegramMessageText extends TelegramMessage {
 
     public TelegramMessage setPageSize(int countElementInPage);
 
-    public TelegramMessage setCurrentPage(int currentPage);
+    public TelegramMessage setCurrentPage(Integer currentPage);
 
     public TelegramMessage setAction(String action);
+
+    public TelegramMessage setFullAction(String action);
 }

@@ -38,7 +38,7 @@ public class StartController {
         TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Главное меню");
         telegramMessage.addLayoutButton(2,1);
         telegramMessage.addButton("Тарологи", "/user/freeproduct");
-        telegramMessage.addButton("Услуги", "/user/freeproduct");
+        telegramMessage.addButton("Услуги", "/view_group");
         telegramMessage.addButton( "Погадайте бесплатно", "/user/freeproduct");
         try {
             messageMenu.send();

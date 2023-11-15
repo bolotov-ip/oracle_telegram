@@ -7,7 +7,6 @@ import com.bolotov.oraclebot.repository.*;
 import com.bolotov.oraclebot.service.OracleDataService;
 import com.bolotov.oraclebot.telegram.message.TelegramMessageFactory;
 import com.bolotov.oraclebot.telegram.message.TelegramMessageMedia;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
 
@@ -101,10 +98,15 @@ public class OracleDataServiceImpl implements OracleDataService {
             JsonNode oraclePriceNode = rootNode.get("price");
             addOracle.setPrice(oraclePriceNode.doubleValue());
 
-            JsonNode oracleUserIdNode = rootNode.get("userId");
-            Optional<User> ownerOracleUser = userRepository.findById(oracleUserIdNode.longValue());
-            if(ownerOracleUser.isPresent())
-                addOracle.setOwner(ownerOracleUser.get());
+            JsonNode oracleLimitNode = rootNode.get("limit");
+            addOracle.setLimit(oracleLimitNode.intValue());
+
+            JsonNode oracleCountDayNode = rootNode.get("countDay");
+            addOracle.setCountDay(oracleCountDayNode.intValue());
+
+            JsonNode oracleUserNameNode = rootNode.get("userName");
+            User ownerOracleUser = userRepository.findByUsername(oracleUserNameNode.textValue());
+            addOracle.setOwner(ownerOracleUser);
 
             JsonNode oracleCategoryNode = rootNode.get("oracleCategory");
             List<String> treeCategory = new ArrayList<>();
@@ -124,7 +126,7 @@ public class OracleDataServiceImpl implements OracleDataService {
                     addOracle.addOracleResult(nameResult, valueResult);
                 }
             }
-
+            addOracle.setCategory(categories.size()>0 ? categories.get(categories.size()-1) : null);
             saveOracle(addOracle, categories);
 
         } catch (Exception e) {
@@ -175,6 +177,7 @@ public class OracleDataServiceImpl implements OracleDataService {
             }
             parent = category;
             categories.add(category);
+            categoryRepository.save(category);
         }
 
         return categories;

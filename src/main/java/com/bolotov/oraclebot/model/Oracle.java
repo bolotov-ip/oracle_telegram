@@ -13,9 +13,9 @@ public class Oracle {
     private Long id;
 
     @ElementCollection
-    @CollectionTable(name="oracle_result", joinColumns = @JoinColumn(name = "oracle_id"))
-    @MapKeyColumn(name = "key")
-    @Column(name = "message")
+    @CollectionTable(name="oracle_results", joinColumns = @JoinColumn(name = "oracle_id"))
+    @MapKeyColumn(name = "name_oracle")
+    @Column(name = "message_oracle")
     private Map<String, String> oracleResult = new HashMap<>();
 
     private double price;
@@ -23,6 +23,11 @@ public class Oracle {
     private String description;
 
     private String name;
+
+    @Column(name = "limit_count")
+    private int limit;
+
+    private int countDay;
 
     @ManyToOne
     @JoinColumn(name = "owner_chat_id")
@@ -90,5 +95,21 @@ public class Oracle {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getCountDay() {
+        return countDay;
+    }
+
+    public void setCountDay(int countDay) {
+        this.countDay = countDay;
     }
 }

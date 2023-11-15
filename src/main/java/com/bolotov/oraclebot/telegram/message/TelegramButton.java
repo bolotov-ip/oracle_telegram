@@ -1,4 +1,4 @@
-package com.bolotov.oraclebot.telegram;
+package com.bolotov.oraclebot.telegram.message;
 
 import java.io.IOException;
 import java.util.HashMap;

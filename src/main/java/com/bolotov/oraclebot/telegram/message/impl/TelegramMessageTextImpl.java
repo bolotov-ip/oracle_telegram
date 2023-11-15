@@ -1,8 +1,7 @@
 package com.bolotov.oraclebot.telegram.message.impl;
 
-import com.bolotov.oraclebot.telegram.TelegramButton;
+import com.bolotov.oraclebot.telegram.message.TelegramButton;
 import com.bolotov.oraclebot.telegram.message.TelegramMessage;
-import com.bolotov.oraclebot.telegram.TelegramBot;
 import com.bolotov.oraclebot.telegram.message.TelegramMessageText;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,12 +27,14 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
 
     protected String action;
 
+    protected String fullAction;
+
     @Override
     public void send() throws TelegramApiException {
         try {
             SendMessage sendMessage = new SendMessage(String.valueOf(chatId), text);
             setButtons(sendMessage);
-            if(countElementsInPage>buttons.size())
+            if(buttons.size()>countElementsInPage || currentPageNumber>1)
                 addNavigateKeyboard(sendMessage);
             bot.execute(sendMessage);
         }
@@ -64,14 +65,23 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
     }
 
     @Override
-    public TelegramMessage setCurrentPage(int currentPage) {
-        currentPageNumber = currentPage;
+    public TelegramMessage setCurrentPage(Integer currentPage) {
+        if(currentPage == null)
+            currentPageNumber = 1;
+        else
+            currentPageNumber = currentPage;
         return this;
     }
 
     @Override
     public TelegramMessage setAction(String action) {
         this.action = action;
+        return this;
+    }
+
+    @Override
+    public TelegramMessage setFullAction(String action) {
+        fullAction = action;
         return this;
     }
 
@@ -83,9 +93,8 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
         List<List<InlineKeyboardButton>> rowsInLine = ((InlineKeyboardMarkup) replyKeyboard).getKeyboard();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         if(currentPageNumber>1) {
-            TelegramButton button = new TelegramButton();
-            button.setAction(action);
-            button.addValue("numberPage", String.valueOf(currentPageNumber-1 ));
+            TelegramButton button = TelegramButton.valueOf(fullAction);
+            button.addValue("np", String.valueOf(currentPageNumber-1 ));
             InlineKeyboardButton buttonPrev = new InlineKeyboardButton();
             buttonPrev.setText("<");
             buttonPrev.setCallbackData(button.toCompressCallbackString());
@@ -98,9 +107,8 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
             rowInLine.add(btnInfo);
         }
         if(currentPageNumber<countPage) {
-            TelegramButton button = new TelegramButton();
-            button.setAction(action);
-            button.addValue("numberPage", String.valueOf(currentPageNumber+1 ));
+            TelegramButton button = TelegramButton.valueOf(fullAction);
+            button.addValue("np", String.valueOf(currentPageNumber+1 ));
             InlineKeyboardButton buttonNext = new InlineKeyboardButton();
             buttonNext.setText(">");
             buttonNext.setCallbackData(button.toCompressCallbackString());
@@ -114,31 +122,32 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
     protected void setButtons(BotApiMethod<?> msg) throws IOException {
         if(buttons==null || buttons.size()==0)
             return;
+        List<TelegramButton> buttonsInPage = buttons.stream()
+                .skip((currentPageNumber-1) * countElementsInPage)
+                .limit(countElementsInPage).toList();
         InlineKeyboardMarkup markupInLine = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInLine = new ArrayList<>();
         List<InlineKeyboardButton> rowInLine = new ArrayList<>();
         int countAddRowBtn = 0;
         int rowCounter = 0;
         int column = 1;
-        for(TelegramButton btn : buttons) {
+        for(TelegramButton btn : buttonsInPage) {
             if(layoutButton!=null && rowCounter<layoutButton.length)
                 column = layoutButton[rowCounter];
-            if(countAddRowBtn<column){
-                InlineKeyboardButton button = new InlineKeyboardButton();
-                button.setText(btn.getText());
-                button.setCallbackData(btn.toCompressCallbackString());
-                rowInLine.add(button);
+            InlineKeyboardButton button = new InlineKeyboardButton();
+            if(countAddRowBtn<column) {
                 countAddRowBtn++;
             }
             else {
                 rowsInLine.add(rowInLine);
                 rowInLine = new ArrayList<>();
-                InlineKeyboardButton button = new InlineKeyboardButton();
-                button.setText(btn.getText());
-                button.setCallbackData(btn.toCompressCallbackString());
-                rowInLine.add(button);
                 countAddRowBtn=1;
+                rowCounter++;
             }
+            button.setText(btn.getText());
+            button.setCallbackData(btn.toCompressCallbackString());
+            rowInLine.add(button);
+
         }
         if(!rowsInLine.contains(rowInLine))
             rowsInLine.add(rowInLine);

@@ -7,7 +7,6 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class DispatcherController {
+public class TelegramDispatcher {
 
     private List<AccessRule> accessRuleList;
 

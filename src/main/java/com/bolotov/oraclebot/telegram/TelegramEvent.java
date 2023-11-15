@@ -1,8 +1,8 @@
 package com.bolotov.oraclebot.telegram;
 
+import com.bolotov.oraclebot.telegram.message.TelegramButton;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,11 +12,13 @@ public class TelegramEvent {
         TelegramEvent event = new TelegramEvent();
         try{
             String action = "";
+            String fullAction = "";
             Long chatId = 0L;
             Integer messageId = null;
             Map<String, String> values = new HashMap<>();
             if(update.hasMessage()) {
-                action = update.getMessage().getText();
+                fullAction = update.getMessage().getText();
+                action = fullAction;
                 if(!action.startsWith("/")) {
                     String messageText = update.getMessage().getText();
                     action = "/" + messageText.substring(0, messageText.indexOf(":"));
@@ -27,6 +29,7 @@ public class TelegramEvent {
                 event.setUsername(update.getMessage().getChat().getUserName());
             } else if (update.hasCallbackQuery()) {
                 String callbackText = update.getCallbackQuery().getData();
+                fullAction = callbackText;
                 TelegramButton button = TelegramButton.valueOf(callbackText);
                 action = button.getAction();
                 chatId = update.getCallbackQuery().getMessage().getChatId();
@@ -41,6 +44,7 @@ public class TelegramEvent {
             event.setChatId(chatId);
             event.setValues(values);
             event.setMessageId(messageId);
+            event.setFullAction(fullAction);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -49,6 +53,8 @@ public class TelegramEvent {
     }
 
     private String actionName;
+
+    private String fullAction;
 
     private Long chatId;
 
@@ -116,5 +122,13 @@ public class TelegramEvent {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFullAction() {
+        return fullAction;
+    }
+
+    public void setFullAction(String fullAction) {
+        this.fullAction = fullAction;
     }
 }
