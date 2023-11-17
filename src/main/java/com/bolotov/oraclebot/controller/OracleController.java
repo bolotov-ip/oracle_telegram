@@ -45,10 +45,13 @@ public class OracleController {
             if(parentCategoryId == null)
                 telegramMessage.addButton( "Назад", "/start" );
             else{
-                OracleCategory parentParent = parentCategory==null? null: parentCategory.getParentId();
-
-                telegramMessage.addButton( "Назад", "/view_group?category=" + parentParent == null ? "": String.valueOf(parentParent.getId()));
-
+                if(parentCategory != null) {
+                    OracleCategory parentParent = parentCategory.getParentId();
+                    if(parentParent == null)
+                        telegramMessage.addButton( "Назад", "/view_group?category=");
+                    else
+                        telegramMessage.addButton( "Назад", "/view_group?category=" + parentParent.getId());
+                }
             }
             telegramMessage.send();
         } catch (Exception e) {

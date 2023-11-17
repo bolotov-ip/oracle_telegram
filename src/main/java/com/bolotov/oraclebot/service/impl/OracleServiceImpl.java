@@ -73,6 +73,7 @@ public class OracleServiceImpl implements OracleService {
 
     @Override
     public List<Oracle> getOraclesByCategory(OracleCategory oracleCategory) {
-        return oracleRepository.findByCategory(oracleCategory);
+        List<Oracle> oracles = oracleRepository.getOraclesByCategory(oracleCategory);
+        return oracles;
     }
 }
