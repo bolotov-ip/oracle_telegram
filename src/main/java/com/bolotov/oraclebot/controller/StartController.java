@@ -26,6 +26,8 @@ public class StartController {
         TelegramMessageMenu messageMenu = messageFactory.newTelegramMessageMenu(event.getChatId());
         messageMenu.addItemMenu("Главное меню", "/start");
         messageMenu.addItemMenu("Настроить отображение медиа", "/src_groups");
+        messageMenu.addItemMenu("Пополнить баланс", "/upbalance");
+        messageMenu.addItemMenu("Свободные заказы", "/all_purchase");
 
         User currentUser = userService.getUser(event.getChatId());
         if(currentUser == null) {

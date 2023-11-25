@@ -1,35 +1,85 @@
 package com.bolotov.oraclebot.service.impl;
 
 import com.bolotov.oraclebot.exception.OracleServiceException;
-import com.bolotov.oraclebot.model.Oracle;
-import com.bolotov.oraclebot.model.OracleCategory;
-import com.bolotov.oraclebot.model.Purchase;
-import com.bolotov.oraclebot.model.User;
+import com.bolotov.oraclebot.model.*;
+import com.bolotov.oraclebot.repository.BalanceRepository;
 import com.bolotov.oraclebot.repository.OracleCategoryRepository;
 import com.bolotov.oraclebot.repository.OracleRepository;
+import com.bolotov.oraclebot.repository.PurchaseRepository;
 import com.bolotov.oraclebot.service.OracleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class OracleServiceImpl implements OracleService {
 
+    private final long COUNT_MS_IN_DAY = 86400000;
+
     @Autowired
     OracleCategoryRepository categoryRepository;
     @Autowired
     OracleRepository oracleRepository;
+    @Autowired
+    BalanceRepository balanceRepository;
+    @Autowired
+    PurchaseRepository purchaseRepository;
 
     @Override
-    public Purchase purchaseFree(User user, Oracle product) throws OracleServiceException {
+    public Purchase purchase(User user, Oracle product) throws OracleServiceException {
+        Balance balance = balanceRepository.findByUser(user);
+        if(balance == null || balance.getAmount()<product.getPrice())
+            throw new OracleServiceException("Недостаточно средств на балансе");
+        Timestamp startDate = new Timestamp(System.currentTimeMillis() - COUNT_MS_IN_DAY*product.getCountDay());
+        int countPurchased = purchaseRepository.getCountPurchasePerTimes(user, product.getId(), startDate);
+        if(countPurchased>=product.getLimit())
+            throw new OracleServiceException("Вы превысили лимит покупок данного продукта");
+        Purchase newPurchase = new Purchase();
+        newPurchase.setDatePurchase(new Timestamp(System.currentTimeMillis()));
+        newPurchase.setOracleId(product.getId());
+        newPurchase.setCustomer(user);
+        newPurchase.setPrice(product.getPrice());
+        newPurchase.setOracleUser(product.getOwner());
+        newPurchase.setState(Purchase.STATE.WAIT_ANSWER);
+        purchaseRepository.save(newPurchase);
+        balance.setAmount(balance.getAmount() - product.getPrice());
+        balanceRepository.save(balance);
+        return newPurchase;
+    }
+
+    @Override
+    public List<Purchase> getAllFreePurchase() {
+        return purchaseRepository.getPurchasesByState(Purchase.STATE.WAIT_ANSWER);
+    }
+
+    @Override
+    public Purchase getPurchaseById(Long id) {
+        Optional<Purchase> purchase = purchaseRepository.findById(id);
+        if(purchase.isPresent())
+            return purchase.get();
         return null;
     }
 
     @Override
-    public Purchase purchaseTarget(User user, Oracle product, User oracleUser) throws OracleServiceException {
-        return null;
+    public Purchase selectPurchaseForAnswer(User user, Long idPurchase) {
+        Purchase purchase =null;
+        Optional<Purchase> optionalPurchase = purchaseRepository.findById(idPurchase);
+        if(optionalPurchase.isPresent()) {
+            List<Purchase> selectedPurchases = purchaseRepository.findStatePurchaseByUser(user, Purchase.STATE.SELECTED);
+            for(Purchase p : selectedPurchases) {
+                p.setState(Purchase.STATE.WAIT_ANSWER);
+                purchaseRepository.save(p);
+            }
+            purchase = optionalPurchase.get();
+            purchase.setOracleUser(user);
+            purchase.setState(Purchase.STATE.SELECTED);
+            purchaseRepository.save(purchase);
+        }
+
+        return purchase;
     }
 
     @Override

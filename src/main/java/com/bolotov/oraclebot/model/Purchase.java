@@ -7,8 +7,8 @@ import java.sql.Timestamp;
 @Entity(name = "purchase")
 public class Purchase {
 
-    enum STATE {
-        PURCHASED, DONE, REJECTED;
+    public enum STATE {
+        WAIT_ANSWER, SELECTED, DONE, REJECTED;
     }
 
     @Id
@@ -31,7 +31,7 @@ public class Purchase {
     private Long oracleId;
 
     @Enumerated
-    private STATE state = STATE.PURCHASED;
+    private STATE state = STATE.WAIT_ANSWER;
 
     public User getOracleUser() {
         return oracleUser;

@@ -42,6 +42,18 @@ public class User {
     @Column(name = "source_set_name")
     Map<String, String> selectSources = new HashMap<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @PrimaryKeyJoinColumn
+    private Balance balance;
+
+    public Balance getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Balance balance) {
+        this.balance = balance;
+    }
+
     public boolean isAdmin() {
         for(Role role : roles){
             if(role.getName().equals(Role.RoleName.ADMIN))

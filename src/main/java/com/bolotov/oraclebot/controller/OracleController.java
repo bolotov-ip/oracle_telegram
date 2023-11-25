@@ -69,7 +69,7 @@ public class OracleController {
             String text = String.format("%s\n%s\nСтоимость: %s рублей\nКоличество использований %d раз в %d дней",
                     oracle.getName(), oracle.getDescription(),oracle.getPrice(), oracle.getLimit(), oracle.getCountDay());
             TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, text);
-            telegramMessage.addButton( oracle.getName(), "/purchase?oracle=" + oracle.getId());
+            telegramMessage.addButton( "Купить", "/purchase?oracle=" + oracle.getId());
             telegramMessage.addButton( "Назад", "/view_group?category=" + oracle.getCategory().getId());
             telegramMessage.send();
         } catch (Exception e) {

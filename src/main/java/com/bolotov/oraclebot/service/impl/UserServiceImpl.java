@@ -1,8 +1,10 @@
 package com.bolotov.oraclebot.service.impl;
 
+import com.bolotov.oraclebot.model.Balance;
 import com.bolotov.oraclebot.model.Role;
 import com.bolotov.oraclebot.model.SourceSet;
 import com.bolotov.oraclebot.model.User;
+import com.bolotov.oraclebot.repository.BalanceRepository;
 import com.bolotov.oraclebot.repository.RoleRepository;
 import com.bolotov.oraclebot.repository.UserRepository;
 import com.bolotov.oraclebot.service.UserService;
@@ -20,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    BalanceRepository balanceRepository;
 
     @Override
     public User getUser(Long chatId) {
@@ -59,5 +64,20 @@ public class UserServiceImpl implements UserService {
     public void selectSourceSet(User user, SourceSet set) {
         user.addSelectSource(set.getGroupName(), set.getName());
         userRepository.save(user);
+    }
+
+    @Override
+    public Balance upBalance(User user, double value) {
+        Balance balance = user.getBalance();
+        if(balance == null) {
+            balance = new Balance();
+            balance.setUser(user);
+            balance.setCurrency("\u20BD");
+            user.setBalance(balance);
+        }
+        double currentValue = balance.getAmount();
+        balance.setAmount(currentValue+value);
+        userRepository.save(user);
+        return balance;
     }
 }

@@ -31,7 +31,7 @@ public class OracleCategory {
         }
         Collections.reverse(names); /**Корневая категория сначала*/
 
-        return String.join(";", names);
+        return String.join(".", names);
     }
 
     public Long getId() {

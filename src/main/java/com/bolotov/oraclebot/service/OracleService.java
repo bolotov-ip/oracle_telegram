@@ -10,9 +10,13 @@ import java.util.List;
 
 public interface OracleService {
 
-    public Purchase purchaseFree(User user, Oracle product) throws OracleServiceException;
+    public Purchase purchase(User user, Oracle product) throws OracleServiceException;
 
-    public Purchase purchaseTarget(User user, Oracle product, User oracleUser) throws OracleServiceException;
+    public List<Purchase> getAllFreePurchase();
+
+    public Purchase getPurchaseById(Long id);
+
+    public Purchase selectPurchaseForAnswer(User user, Long idPurchase);
 
     public void oracle(User oracleUser, Purchase purchase) throws OracleServiceException;
 

@@ -1,5 +1,6 @@
 package com.bolotov.oraclebot.service;
 
+import com.bolotov.oraclebot.model.Balance;
 import com.bolotov.oraclebot.model.Role;
 import com.bolotov.oraclebot.model.SourceSet;
 import com.bolotov.oraclebot.model.User;
@@ -21,4 +22,6 @@ public interface UserService {
     public List<User> getUserByRoleName(Role.RoleName roleName);
 
     public void selectSourceSet(User user, SourceSet set);
+
+    public Balance upBalance(User user, double value);
 }
