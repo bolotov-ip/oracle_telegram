@@ -22,7 +22,7 @@ public class UserController {
 
     @TelegramAction(action="/user/freeproduct")
     public void freeRandomProduct(TelegramEvent event) throws TelegramApiException {
-        TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Здесь будет показан случайный бесплатный продукт");
+        TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, "Здесь будет показан случайный бесплатный продукт");
         telegramMessage.addButton( "назад", "/start");
         telegramMessage.send();
     }
@@ -32,7 +32,7 @@ public class UserController {
         User user = userServiceImpl.getUser(event.getChatId());
         double value = 3000;
         Balance balance = userServiceImpl.upBalance(user, 3000);
-        TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, String.format("Ваш текущий баланс %.2f %s", balance.getAmount(), balance.getCurrency()));
+        TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, String.format("Ваш текущий баланс %.2f %s", balance.getAmount(), balance.getCurrency()));
         telegramMessage.addButton( "назад", "/start");
         telegramMessage.send();
     }

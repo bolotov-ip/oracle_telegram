@@ -2,7 +2,6 @@ package com.bolotov.oraclebot.controller;
 
 import com.bolotov.oraclebot.model.Oracle;
 import com.bolotov.oraclebot.model.OracleCategory;
-import com.bolotov.oraclebot.service.OracleDataService;
 import com.bolotov.oraclebot.service.OracleService;
 import com.bolotov.oraclebot.service.UserService;
 import com.bolotov.oraclebot.telegram.TelegramEvent;
@@ -33,7 +32,7 @@ public class OracleController {
             OracleCategory parentCategory = oracleService.getCategoryById(parentCategoryId);
             List<OracleCategory> categoryList = oracleService.getCategoriesByParent(parentCategoryId);
 
-            TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, "Здесь представлены все предлагаемые возможности");
+            TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, "Здесь представлены все предлагаемые возможности");
             for(OracleCategory category : categoryList) {
                 telegramMessage.addButton( category.getName(), "/view_group?category=" + category.getId());
             }
@@ -68,7 +67,7 @@ public class OracleController {
             Oracle oracle = oracleService.getOracleById(oracleId);
             String text = String.format("%s\n%s\nСтоимость: %s рублей\nКоличество использований %d раз в %d дней",
                     oracle.getName(), oracle.getDescription(),oracle.getPrice(), oracle.getLimit(), oracle.getCountDay());
-            TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, text);
+            TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, text);
             telegramMessage.addButton( "Купить", "/purchase?oracle=" + oracle.getId());
             telegramMessage.addButton( "Назад", "/view_group?category=" + oracle.getCategory().getId());
             telegramMessage.send();

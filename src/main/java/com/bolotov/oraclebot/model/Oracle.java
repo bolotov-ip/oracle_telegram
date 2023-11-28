@@ -29,6 +29,8 @@ public class Oracle {
 
     private int countDay;
 
+    private String sourceGroup;
+
     @ManyToOne
     @JoinColumn(name = "owner_chat_id")
     private User owner;
@@ -111,5 +113,13 @@ public class Oracle {
 
     public void setCountDay(int countDay) {
         this.countDay = countDay;
+    }
+
+    public String getSourceGroup() {
+        return sourceGroup;
+    }
+
+    public void setSourceGroup(String sourceGroup) {
+        this.sourceGroup = sourceGroup;
     }
 }

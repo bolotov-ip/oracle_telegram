@@ -21,7 +21,7 @@ public class InformationController {
     @TelegramAction(action="/error")
     public void error(TelegramEvent event) {
 
-        TelegramMessageText telegramMessage = messageFactory.newTelegramMessageText(event, event.getText());
+        TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, event.getText());
         telegramMessage.addButton( "На главную", "/start");
         try {
             telegramMessage.send();

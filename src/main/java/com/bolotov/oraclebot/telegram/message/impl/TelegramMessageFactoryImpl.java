@@ -32,7 +32,7 @@ public class TelegramMessageFactoryImpl implements TelegramMessageFactory {
         return messageMedia;
     }
 
-    public TelegramMessageText newTelegramMessageText(TelegramEvent event, String text) {
+    public TelegramMessageText newTelegramAdaptiveMessageText(TelegramEvent event, String text) {
         TelegramMessageText messageText = null;
         if(event.isCallback()) {
             messageText = new TelegramMessageEditTextImpl();
@@ -40,6 +40,19 @@ public class TelegramMessageFactoryImpl implements TelegramMessageFactory {
         }
         else
             messageText= new TelegramMessageTextImpl();
+        messageText.setBot(bot);
+        messageText.setAction(event.getActionName());
+        messageText.setChatId(event.getChatId());
+        messageText.setText(text);
+        messageText.setFullAction(event.getFullAction());
+        String numberPage = event.getValues().get("np");
+        messageText.setCurrentPage(Integer.valueOf(numberPage==null? "1"  : numberPage));
+        return messageText;
+    }
+
+    @Override
+    public TelegramMessageText newTelegramMessageText(TelegramEvent event, String text) {
+        TelegramMessageText messageText = new TelegramMessageTextImpl();
         messageText.setBot(bot);
         messageText.setAction(event.getActionName());
         messageText.setChatId(event.getChatId());

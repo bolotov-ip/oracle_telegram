@@ -83,6 +83,12 @@ public class OracleServiceImpl implements OracleService {
     }
 
     @Override
+    public List<Purchase> getSelectedPurchase(User user) {
+        List<Purchase> purchases = purchaseRepository.findStatePurchaseByUser(user, Purchase.STATE.SELECTED);
+        return purchases;
+    }
+
+    @Override
     public void oracle(User oracleUser, Purchase purchase) throws OracleServiceException {
 
     }
@@ -116,14 +122,33 @@ public class OracleServiceImpl implements OracleService {
 
     @Override
     public Oracle getOracleById(Long id) {
-        if(id==null)
-            return null;
-        return oracleRepository.findById(id).get();
+        Optional<Oracle> optionalOracle = oracleRepository.findById(id);
+        if(optionalOracle.isPresent())
+            return optionalOracle.get();
+        return null;
     }
 
     @Override
     public List<Oracle> getOraclesByCategory(OracleCategory oracleCategory) {
         List<Oracle> oracles = oracleRepository.getOraclesByCategory(oracleCategory);
         return oracles;
+    }
+
+    @Override
+    public void donePurchase(Purchase purchase) {
+        purchase.setState(Purchase.STATE.DONE);
+        purchaseRepository.save(purchase);
+    }
+
+    @Override
+    public void unselectPurchase(Long purchaseId) throws OracleServiceException {
+        Optional<Purchase> optionalPurchase = purchaseRepository.findById(purchaseId);
+        if(optionalPurchase.isPresent()) {
+            Purchase purchase = optionalPurchase.get();
+            purchase.setState(Purchase.STATE.WAIT_ANSWER);
+            purchaseRepository.save(purchase);
+        }
+        else
+            throw new OracleServiceException("Заказа с таким id не сущетсвует");
     }
 }

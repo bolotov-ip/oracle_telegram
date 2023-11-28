@@ -18,6 +18,8 @@ public interface OracleService {
 
     public Purchase selectPurchaseForAnswer(User user, Long idPurchase);
 
+    public List<Purchase> getSelectedPurchase(User user);
+
     public void oracle(User oracleUser, Purchase purchase) throws OracleServiceException;
 
     public List<Purchase> getFreePurchase();
@@ -31,5 +33,9 @@ public interface OracleService {
     public Oracle getOracleById(Long id);
 
     public List<Oracle> getOraclesByCategory(OracleCategory oracleCategory);
+
+    public void donePurchase(Purchase purchase);
+
+    public void unselectPurchase(Long purchaseId) throws OracleServiceException;
 
 }

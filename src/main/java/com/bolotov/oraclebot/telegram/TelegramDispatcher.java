@@ -30,6 +30,8 @@ public class TelegramDispatcher {
             Object controller = entry.getValue();
             for(Method method : controller.getClass().getDeclaredMethods()) {
                 TelegramAction annotation = method.getAnnotation(TelegramAction.class);
+                if(annotation == null)
+                    continue;
                 String actionMethod = annotation.action();
                 if(action.equals(actionMethod)){
                     try {

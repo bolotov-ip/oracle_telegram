@@ -4,7 +4,9 @@ import com.bolotov.oraclebot.telegram.message.TelegramButton;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TelegramEvent {
 
@@ -68,6 +70,12 @@ public class TelegramEvent {
 
     private boolean isCallback = false;
 
+    private boolean hasMedia = false;
+
+    private Set<String> photos = new HashSet<>();
+
+    private Set<String> videos = new HashSet<>();
+
     public String getActionName() {
         return actionName;
     }
@@ -130,5 +138,29 @@ public class TelegramEvent {
 
     public void setFullAction(String fullAction) {
         this.fullAction = fullAction;
+    }
+
+    public boolean isHasMedia() {
+        return hasMedia;
+    }
+
+    public void setHasMedia(boolean hasMedia) {
+        this.hasMedia = hasMedia;
+    }
+
+    public Set<String> getPhotos() {
+        return photos;
+    }
+
+    public void setPhotos(Set<String> photos) {
+        this.photos = photos;
+    }
+
+    public Set<String> getVideos() {
+        return videos;
+    }
+
+    public void setVideos(Set<String> videos) {
+        this.videos = videos;
     }
 }

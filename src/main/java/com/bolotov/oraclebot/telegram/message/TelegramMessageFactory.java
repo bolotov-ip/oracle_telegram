@@ -10,6 +10,8 @@ public interface TelegramMessageFactory {
 
     public TelegramMessageMedia newTelegramMessageMedia(Long chatId, String text) ;
 
+    public TelegramMessageText newTelegramAdaptiveMessageText(TelegramEvent event, String text);
+
     public TelegramMessageText newTelegramMessageText(TelegramEvent event, String text);
 
     public TelegramMessageMenu newTelegramMessageMenu(Long chatId);

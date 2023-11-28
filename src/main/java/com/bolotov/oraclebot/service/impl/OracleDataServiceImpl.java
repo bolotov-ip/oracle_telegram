@@ -101,6 +101,9 @@ public class OracleDataServiceImpl implements OracleDataService {
             JsonNode oracleLimitNode = rootNode.get("limit");
             addOracle.setLimit(oracleLimitNode.intValue());
 
+            JsonNode oracleGroupSource = rootNode.get("groupSource");
+            addOracle.setSourceGroup(oracleGroupSource.textValue());
+
             JsonNode oracleCountDayNode = rootNode.get("countDay");
             addOracle.setCountDay(oracleCountDayNode.intValue());
 
