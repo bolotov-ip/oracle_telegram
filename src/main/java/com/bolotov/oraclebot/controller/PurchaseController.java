@@ -2,6 +2,7 @@ package com.bolotov.oraclebot.controller;
 
 import com.bolotov.oraclebot.exception.OracleServiceException;
 import com.bolotov.oraclebot.model.*;
+import com.bolotov.oraclebot.service.MessageService;
 import com.bolotov.oraclebot.service.OracleDataService;
 import com.bolotov.oraclebot.service.OracleService;
 import com.bolotov.oraclebot.service.UserService;
@@ -33,6 +34,9 @@ public class PurchaseController {
     @Autowired
     TelegramMessageFactory messageFactory;
 
+    @Autowired
+    MessageService messageService;
+
     @TelegramAction(action="/purchase")
     public String purchase(TelegramEvent event) {
         try {
@@ -55,9 +59,9 @@ public class PurchaseController {
         try {
 
             User user = userService.getUser(event.getChatId());
-            List<Purchase> selectedPurchases = oracleService.getSelectedPurchase(user);
-            for(Purchase p : selectedPurchases) {
-                event.getValues().put("id_p", String.valueOf(p.getId()));
+            Purchase selectedPurchase = oracleService.getSelectedPurchase(user);
+            if(selectedPurchase!=null){
+                event.getValues().put("id_p", String.valueOf(selectedPurchase.getId()));
                 return "/view_purchase";
             }
             List<Purchase> purchaseList = oracleService.getAllFreePurchase();
@@ -86,7 +90,9 @@ public class PurchaseController {
     @TelegramAction(action="/view_purchase")
     public String viewPurchase(TelegramEvent event) {
         try {
+
             User user = userService.getUser(event.getChatId());
+            messageService.removeMessage(user.getChatId());
             Purchase purchase = oracleService.selectPurchaseForAnswer(user, Long.valueOf(event.getValues().get("id_p")));
             Oracle oracle = oracleService.getOracleById(purchase.getOracleId());
             if(oracle==null){
@@ -149,17 +155,15 @@ public class PurchaseController {
             SourceSet selectSet = getSelectSourceSet(sourceSets, selectSourceSetName);
             Source source = getSelectSource(selectSet.getSources(), resultName);
             if(source!=null) {
-                TelegramMessageMedia messageMediaAnswer = messageFactory.newTelegramMessageMedia(purchase.getCustomer().getChatId(), "");
                 switch (source.getType()){
-                    case PHOTO -> messageMediaAnswer.addPhotoTelegramId(source.getTelegramId());
-                    case VIDEO -> messageMediaAnswer.addVideoTelegramId(source.getTelegramId());
+                    case PHOTO -> messageService.addPhoto(user, source.getTelegramId());
+                    case VIDEO -> messageService.addVideo(user, source.getTelegramId());
                 }
-                messageMediaAnswer.send();
             }
-            TelegramMessageText telegramMessageAnswer = messageFactory.newTelegramMessageText(event, result);
-            telegramMessageAnswer.setChatId(purchase.getCustomer().getChatId());
-            telegramMessageAnswer.send();
+            messageService.addText(user, result);
+            messageService.sendCurrentMessage(user, purchase.getCustomer());
             oracleService.donePurchase(purchase);
+
             TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, String.format("Заказ №%d успешно исполнен", purchase.getId()));
             telegramMessage.addButton("Выбрать новый заказ", "/all_purchase");
             telegramMessage.send();
@@ -168,6 +172,9 @@ public class PurchaseController {
         }
         return null;
     }
+
+
+
 
     private SourceSet getSelectSourceSet(List<SourceSet> sourceSets, String name) {
         for(SourceSet set : sourceSets) {
@@ -184,4 +191,6 @@ public class PurchaseController {
         }
         return null;
     }
+
+
 }

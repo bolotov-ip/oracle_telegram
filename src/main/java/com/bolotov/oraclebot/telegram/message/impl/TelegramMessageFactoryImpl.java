@@ -64,6 +64,15 @@ public class TelegramMessageFactoryImpl implements TelegramMessageFactory {
     }
 
     @Override
+    public TelegramMessageText newTelegramMessageText(Long chatId, String text) {
+        TelegramMessageText messageText = new TelegramMessageTextImpl();
+        messageText.setBot(bot);
+        messageText.setText(text);
+        messageText.setChatId(chatId);
+        return messageText;
+    }
+
+    @Override
     public TelegramMessageMenu newTelegramMessageMenu(Long chatId) {
         TelegramMessageMenu messageMenu = new TelegramMessageMenuImpl();
         messageMenu.setBot(bot);

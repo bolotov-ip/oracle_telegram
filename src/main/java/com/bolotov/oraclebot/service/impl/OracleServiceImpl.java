@@ -83,9 +83,11 @@ public class OracleServiceImpl implements OracleService {
     }
 
     @Override
-    public List<Purchase> getSelectedPurchase(User user) {
+    public Purchase getSelectedPurchase(User user) {
         List<Purchase> purchases = purchaseRepository.findStatePurchaseByUser(user, Purchase.STATE.SELECTED);
-        return purchases;
+        if(purchases.size()>0)
+            return purchases.get(0);
+        return null;
     }
 
     @Override

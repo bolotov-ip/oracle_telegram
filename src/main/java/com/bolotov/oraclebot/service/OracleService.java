@@ -18,7 +18,7 @@ public interface OracleService {
 
     public Purchase selectPurchaseForAnswer(User user, Long idPurchase);
 
-    public List<Purchase> getSelectedPurchase(User user);
+    public Purchase getSelectedPurchase(User user);
 
     public void oracle(User oracleUser, Purchase purchase) throws OracleServiceException;
 

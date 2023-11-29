@@ -14,5 +14,7 @@ public interface TelegramMessageFactory {
 
     public TelegramMessageText newTelegramMessageText(TelegramEvent event, String text);
 
+    public TelegramMessageText newTelegramMessageText(Long chatId, String text);
+
     public TelegramMessageMenu newTelegramMessageMenu(Long chatId);
 }

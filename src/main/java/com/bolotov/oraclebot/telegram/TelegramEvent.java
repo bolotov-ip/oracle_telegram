@@ -1,12 +1,11 @@
 package com.bolotov.oraclebot.telegram;
 
 import com.bolotov.oraclebot.telegram.message.TelegramButton;
+import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class TelegramEvent {
 
@@ -19,16 +18,47 @@ public class TelegramEvent {
             Integer messageId = null;
             Map<String, String> values = new HashMap<>();
             if(update.hasMessage()) {
-                fullAction = update.getMessage().getText();
-                action = fullAction;
-                if(!action.startsWith("/")) {
-                    String messageText = update.getMessage().getText();
-                    action = "/" + messageText.substring(0, messageText.indexOf(":"));
-                    String text = messageText.substring(messageText.indexOf(" ") + 1);
-                    event.setText(text);
+                if(update.getMessage().hasVideo()) {
+                    action = "/media";
+                    event.setHasVideo(true);
+                    event.setVideoId(update.getMessage().getVideo().getFileId());
+                    String groupId = update.getMessage().getMediaGroupId();
+                    chatId = update.getMessage().getChatId();
+                    event.setText(update.getMessage().getCaption());
+                    if(groupId != null) {
+                        event.setHasGroup(true);
+                        event.setGroupId(groupId);
+                    }
                 }
-                chatId = update.getMessage().getChatId();
-                event.setUsername(update.getMessage().getChat().getUserName());
+                else if(update.getMessage().hasPhoto()) {
+                    action = "/media";
+                    event.setHasPhoto(true);
+                    PhotoSize photoSizeMax = null;
+                    for(PhotoSize photoSize : update.getMessage().getPhoto()) {
+                        if(photoSizeMax == null)
+                            photoSizeMax = photoSize;
+                        if(photoSize.getFileSize()>photoSizeMax.getFileSize())
+                            photoSizeMax = photoSize;
+                    }
+                    event.setPhotoId(photoSizeMax.getFileId());
+                    String groupId = update.getMessage().getMediaGroupId();
+                    chatId = update.getMessage().getChatId();
+                    event.setText(update.getMessage().getCaption());
+                    if(groupId != null) {
+                        event.setHasGroup(true);
+                        event.setGroupId(groupId);
+                    }
+                }
+                else if(update.getMessage().hasText()){
+                    fullAction = update.getMessage().getText();
+                    action = fullAction;
+                    if(!action.startsWith("/")) {
+                        action = "/text";
+                        event.setText(fullAction);
+                    }
+                    chatId = update.getMessage().getChatId();
+                    event.setUsername(update.getMessage().getChat().getUserName());
+                }
             } else if (update.hasCallbackQuery()) {
                 String callbackText = update.getCallbackQuery().getData();
                 fullAction = callbackText;
@@ -62,6 +92,8 @@ public class TelegramEvent {
 
     private Integer messageId;
 
+    private String groupId;
+
     private Map<String, String> values;
 
     private String text;
@@ -70,11 +102,23 @@ public class TelegramEvent {
 
     private boolean isCallback = false;
 
-    private boolean hasMedia = false;
+    private boolean hasPhoto = false;
 
-    private Set<String> photos = new HashSet<>();
+    private boolean hasVideo = false;
 
-    private Set<String> videos = new HashSet<>();
+    private boolean hasGroup = false;
+
+    private boolean hasDocument = false;
+
+    private boolean hasVoice = false;
+
+    private String photoId;
+
+    private String videoId;
+
+    private String documentId;
+
+    private String voiceId;
 
     public String getActionName() {
         return actionName;
@@ -140,27 +184,89 @@ public class TelegramEvent {
         this.fullAction = fullAction;
     }
 
-    public boolean isHasMedia() {
-        return hasMedia;
+
+    public boolean hasDocument() {
+        return hasDocument;
     }
 
-    public void setHasMedia(boolean hasMedia) {
-        this.hasMedia = hasMedia;
+
+    public boolean isHasDocument() {
+        return hasDocument;
     }
 
-    public Set<String> getPhotos() {
-        return photos;
+    public void setHasDocument(boolean hasDocument) {
+        this.hasDocument = hasDocument;
     }
 
-    public void setPhotos(Set<String> photos) {
-        this.photos = photos;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public Set<String> getVideos() {
-        return videos;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
-    public void setVideos(Set<String> videos) {
-        this.videos = videos;
+    public boolean isPhoto() {
+        return hasPhoto;
+    }
+
+    public void setHasPhoto(boolean hasPhoto) {
+        this.hasPhoto = hasPhoto;
+    }
+
+    public boolean isVideo() {
+        return hasVideo;
+    }
+
+    public void setHasVideo(boolean hasVideo) {
+        this.hasVideo = hasVideo;
+    }
+
+    public boolean isGroup() {
+        return hasGroup;
+    }
+
+    public void setHasGroup(boolean hasGroup) {
+        this.hasGroup = hasGroup;
+    }
+
+    public boolean isHasVoice() {
+        return hasVoice;
+    }
+
+    public void setHasVoice(boolean hasVoice) {
+        this.hasVoice = hasVoice;
+    }
+
+    public String getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(String photoId) {
+        this.photoId = photoId;
+    }
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
+    }
+
+    public String getVoiceId() {
+        return voiceId;
+    }
+
+    public void setVoiceId(String voiceId) {
+        this.voiceId = voiceId;
     }
 }

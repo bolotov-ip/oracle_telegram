@@ -1,43 +1,53 @@
 package com.bolotov.oraclebot.model;
 
-import jakarta.persistence.*;
+import com.bolotov.oraclebot.service.impl.MessageServiceImpl;
 
-import java.sql.Timestamp;
-import java.util.Set;
+import java.util.*;
 
-@Entity(name = "message")
 public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    private Long ownerId;
 
-    private String text;
+    private List<String> texts = new LinkedList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "purchase_id")
-    private Purchase purchase;
+    private List<MessageMedia> medias = new ArrayList<>();
 
-    private Timestamp createDate;
+    private Map<String, LinkedList<MessageMedia>> groupMedias = new HashMap<>();
 
-    @ElementCollection
-    @CollectionTable(name="media_list")
-    private Set<String> mediaList;
-
-    public Purchase getPurchase() {
-        return purchase;
+    public void addText(String text) {
+        texts.add(text);
     }
 
-    public void setPurchase(Purchase purchase) {
-        this.purchase = purchase;
+    public List<String> getTexts() {
+        return texts;
     }
 
-
-    public Long getId() {
-        return id;
+    public Long getOwnerId() {
+        return ownerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public void addMedia(String telegramId, String caption, MessageMedia.TYPE type) {
+        medias.add(new MessageMedia(telegramId, caption, type));
+    }
+
+    public List<MessageMedia> getMedias() {
+        return medias;
+    }
+
+    public void addMediaGroup(String groupId, String telegramId, String caption, MessageMedia.TYPE type) {
+        MessageMedia media = new MessageMedia(telegramId, caption, type);
+        LinkedList<MessageMedia> listMedias = groupMedias.get(groupId);
+        if(listMedias == null) {
+            listMedias = new LinkedList<>();
+            groupMedias.put(groupId, listMedias);
+        }
+        listMedias.add(media);
+    }
+
+    public Map<String, LinkedList<MessageMedia>> getGroupMedias() {
+        return groupMedias;
     }
 }
