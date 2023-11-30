@@ -20,4 +20,9 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     @Query("SELECT p FROM purchase p where p.state=:state and p.oracleUser=:user")
     public List<Purchase> findStatePurchaseByUser(@Param("user")  User user, @Param("state")  Purchase.STATE state);
 
+    @Query("SELECT count(p) FROM purchase p where p.state=:state and p.customer=:user")
+    public int countStatePurchaseByCustomer(@Param("user")  User user, @Param("state")  Purchase.STATE state);
+
+    @Query("SELECT count(p) FROM purchase p where p.state=:state")
+    public int countPurchaseByState(@Param("state")  Purchase.STATE state);
 }

@@ -16,22 +16,26 @@ public class User {
 
     @Id
     @Column(name = "chat_id")
-    Long chatId;
+    private Long chatId;
 
     @Column(name = "date_visit")
-    LocalDateTime dateVisit;
+    private LocalDateTime dateVisit;
 
     @Column(name = "user_name")
-    String username;
+    private String username;
 
     @Column(name = "first_name")
-    String firstname;
+    private String firstname;
 
     @Column(name = "last_name")
-    String lastname;
+    private String lastname;
 
     @Column(name = "date_registration")
-    Timestamp dateRegistration;
+    private Timestamp dateRegistration;
+
+    @ManyToOne
+    @JoinColumn(name = "select_role_id")
+    private Role selectRole;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
@@ -45,6 +49,14 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private Balance balance;
+
+    public Role getSelectRole() {
+        return selectRole;
+    }
+
+    public void setSelectRole(Role selectRole) {
+        this.selectRole = selectRole;
+    }
 
     public Balance getBalance() {
         return balance;
@@ -130,6 +142,8 @@ public class User {
         this.selectSources = selectSources;
     }
 
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -147,4 +161,5 @@ public class User {
     public String toString() {
         return username;
     }
+
 }

@@ -9,12 +9,14 @@ import java.util.Set;
 public class Role {
 
     public enum RoleName {
-        USER, ADMIN, OWNER;
+        USER, EXPERT, ADMIN, OWNER;
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Enumerated
+    @Enumerated(EnumType.STRING)
+    @Column(unique = true)
     private RoleName name;
     @Transient
     @ManyToMany(mappedBy = "roles")

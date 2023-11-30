@@ -32,7 +32,7 @@ public class OracleController {
             OracleCategory parentCategory = oracleService.getCategoryById(parentCategoryId);
             List<OracleCategory> categoryList = oracleService.getCategoriesByParent(parentCategoryId);
 
-            TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, "Здесь представлены все предлагаемые возможности");
+            TelegramMessageText telegramMessage = messageFactory.newTelegramAdaptiveMessageText(event, "Что вы ищете?\uD83D\uDD0E");
             for(OracleCategory category : categoryList) {
                 telegramMessage.addButton( category.getName(), "/view_group?category=" + category.getId());
             }

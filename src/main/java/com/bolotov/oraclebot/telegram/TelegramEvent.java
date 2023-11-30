@@ -18,6 +18,9 @@ public class TelegramEvent {
             Integer messageId = null;
             Map<String, String> values = new HashMap<>();
             if(update.hasMessage()) {
+                event.setUsername(update.getMessage().getChat().getUserName());
+                event.setFirstname(update.getMessage().getChat().getFirstName());
+                event.setLastname(update.getMessage().getChat().getLastName());
                 if(update.getMessage().hasVideo()) {
                     action = "/media";
                     event.setHasVideo(true);
@@ -57,7 +60,7 @@ public class TelegramEvent {
                         event.setText(fullAction);
                     }
                     chatId = update.getMessage().getChatId();
-                    event.setUsername(update.getMessage().getChat().getUserName());
+
                 }
             } else if (update.hasCallbackQuery()) {
                 String callbackText = update.getCallbackQuery().getData();
@@ -69,6 +72,8 @@ public class TelegramEvent {
                 values = button.getValues();
                 event.setCallback(true);
                 event.setUsername(update.getCallbackQuery().getMessage().getChat().getUserName());
+                event.setFirstname(update.getCallbackQuery().getMessage().getChat().getFirstName());
+                event.setLastname(update.getCallbackQuery().getMessage().getChat().getLastName());
             } else if (update.hasPreCheckoutQuery()) {
 
             }
@@ -99,6 +104,10 @@ public class TelegramEvent {
     private String text;
 
     private String username;
+
+    private String firstname;
+
+    private String lastname;
 
     private boolean isCallback = false;
 
@@ -268,5 +277,21 @@ public class TelegramEvent {
 
     public void setVoiceId(String voiceId) {
         this.voiceId = voiceId;
+    }
+
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 }

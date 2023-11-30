@@ -33,6 +33,7 @@ public class TelegramMessageTextImpl extends TelegramMessageImpl implements Tele
     public void send() throws TelegramApiException {
         try {
             SendMessage sendMessage = new SendMessage(String.valueOf(chatId), text);
+            sendMessage.enableHtml(true);
             setButtons(sendMessage);
             if(buttons.size()>countElementsInPage || currentPageNumber>1)
                 addNavigateKeyboard(sendMessage);

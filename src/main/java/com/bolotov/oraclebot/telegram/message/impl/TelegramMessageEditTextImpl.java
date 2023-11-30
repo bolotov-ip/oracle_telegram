@@ -16,6 +16,7 @@ public class TelegramMessageEditTextImpl extends TelegramMessageTextImpl impleme
     public void send() throws TelegramApiException {
         try {
             EditMessageText  editMessageText= new EditMessageText();
+            editMessageText.enableHtml(true);
             editMessageText.setText(text);
             editMessageText.setChatId(chatId);
             editMessageText.setMessageId(messageId);
